@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>CustomButton.qml</file>
+        <file>images/logo.png</file>
+        <file>fonts/Roboto_Slab/RobotoSlab-ExtraBold.ttf</file>
+        <file>fonts/Roboto_Slab/RobotoSlab-Regular.ttf</file>
     </qresource>
 </RCC>
