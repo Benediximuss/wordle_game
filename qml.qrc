@@ -1,9 +1,16 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>CustomButton.qml</file>
+        <file>components/CustomButton.qml</file>
         <file>images/logo.png</file>
         <file>fonts/Roboto_Slab/RobotoSlab-ExtraBold.ttf</file>
         <file>fonts/Roboto_Slab/RobotoSlab-Regular.ttf</file>
+        <file>components/MainPage.qml</file>
+        <file>components/GamePage.qml</file>
+        <file>components/Keyboard.qml</file>
+        <file>components/LetterCell.qml</file>
+        <file>components/KeyboardRow.qml</file>
+        <file>components/CustomIcon.qml</file>
+        <file>components/KeyboardKey.qml</file>
     </qresource>
 </RCC>
