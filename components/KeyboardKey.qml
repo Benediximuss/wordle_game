@@ -9,12 +9,13 @@ Rectangle {
     color: "#818384"
     radius: 5
 
-    property string keyText: ""
+    property string keyLetter: ""
     property int textSize: 24
-    property var onClicked: null
+
+    signal keyPressed(string keyText)
 
     Text {
-        text: keyText
+        text: keyRoot.keyLetter
         font.pixelSize: keyRoot.textSize
         font.bold: true
         color: "white"
@@ -24,11 +25,47 @@ Rectangle {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-
-        onClicked: {
-            if (keyRoot.onClicked) {
-                keyRoot.onClicked()
-            }
+        onPressed: {
+            keyRoot.state = "pressed"
+        }
+        onReleased: {
+            keyRoot.state = ""
+            keyRoot.keyPressed(keyRoot.keyLetter)
+        }
+        onCanceled: {
+            keyRoot.state = ""
         }
     }
+
+    states: [
+        State {
+            name: "pressed"
+            when: mouseArea.pressed
+            PropertyChanges {
+                target: keyRoot
+                scale: 0.95
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: ""
+            to: "pressed"
+            NumberAnimation {
+                properties: "scale"
+                duration: 50
+                easing.type: Easing.OutQuad
+            }
+        },
+        Transition {
+            from: "pressed"
+            to: ""
+            NumberAnimation {
+                properties: "scale"
+                duration: 50
+                easing.type: Easing.OutQuad
+            }
+        }
+    ]
 }

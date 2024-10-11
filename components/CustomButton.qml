@@ -13,7 +13,8 @@ Rectangle {
     property color fillColor: "transparent"
     property color textColor: "black"
     property string buttonText: ""
-    property var onClicked: null
+
+    signal clicked
 
     Text {
         text: buttonRoot.buttonText
@@ -95,10 +96,7 @@ Rectangle {
                 }
                 ScriptAction {
                     script: {
-                        if (buttonRoot.onClicked) {
-                            buttonRoot.onClicked()
-                        }
-
+                        buttonRoot.clicked()
                         buttonRoot.state = mouseArea.containsMouse ? "mouseIn" : "mouseOut"
                     }
                 }

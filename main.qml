@@ -4,7 +4,6 @@ import QtQuick.Controls 2.14
 
 import "components"
 
-
 Window {
     visible: true
     width: 640
@@ -30,7 +29,11 @@ Window {
 
     StackView {
         id: stackView
-        initialItem: /*MainPage {}*/ GamePage {}
+//        initialItem: MainPage {}
+        initialItem: GamePage {}
         anchors.fill: parent
+        onCurrentItemChanged: {
+            stackView.currentItem.forceActiveFocus()
+        }
     }
 }

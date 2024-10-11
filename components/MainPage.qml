@@ -54,7 +54,7 @@ Rectangle {
 
             CustomButton {
                 buttonText: "Quit"
-                onClicked: function () {
+                onClicked: {
                     console.log("Quiting the game...")
                     Qt.quit()
                 }
@@ -64,7 +64,7 @@ Rectangle {
                 fillColor: "black"
                 buttonText: "Play"
                 textColor: "white"
-                onClicked: function () {
+                onClicked: {
                     console.log("Starting the game...")
                     stackView.push("GamePage.qml")
                 }
