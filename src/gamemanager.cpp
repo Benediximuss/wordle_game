@@ -138,6 +138,8 @@ void GameManager::processGuess(QString &guess)
             letters[guess[i]] = LetterStatus::CORRECT;
             result[i] = (int)LetterStatus::CORRECT;
             targetLetterCount[guess[i]]--;
+
+            emit letterUsed(guess[i], result[i]);
         }
     }
 
@@ -160,7 +162,10 @@ void GameManager::processGuess(QString &guess)
             result[i] = (int)status;
 
             if (letters[guess[i]] == LetterStatus::NOT_USED)
+            {
                 letters[guess[i]] = status;
+                emit letterUsed(guess[i], result[i]);
+            }
         }
     }
 

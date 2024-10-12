@@ -32,19 +32,13 @@ StackPage {
     }
 
     function addLetter(letter) {
-        if (currentRow < totalRows) {
-            if (currentCol < totalCols) {
+        if (currentRow < totalRows && currentCol < totalCols) {
                 var index = currentRow * totalCols + currentCol
                 gridModel.set(index, {
                                   "state": "nonEmpty",
                                   "cellLetter": letter
                               })
                 currentCol++
-            } else {
-                console.log("Cannot add more letters to this row")
-            }
-        } else {
-            console.log("No more rows available.")
         }
     }
 
@@ -56,8 +50,6 @@ StackPage {
                               "state": "empty",
                               "cellLetter": ""
                           })
-        } else {
-            console.log("Nothing to delete in this row")
         }
     }
 
@@ -65,19 +57,15 @@ StackPage {
     property bool isProcessing: false
 
     function submitWord() {
-        if (!isProcessing) {
-            if (currentCol === totalCols) {
-                isProcessing = true
-                var word = ""
-                for (var i = 0; i < totalCols; i++) {
-                    var index = currentRow * totalCols + i
-                    word += gridModel.get(index).cellLetter
-                }
-
-                GameManager.enterGuess(word)
-            } else {
-                console.log("Not enough letters to submit.")
+        if (!isProcessing && currentCol === totalCols) {
+            isProcessing = true
+            var word = ""
+            for (var i = 0; i < totalCols; i++) {
+                var index = currentRow * totalCols + i
+                word += gridModel.get(index).cellLetter
             }
+
+            GameManager.enterGuess(word)
         }
     }
 
@@ -229,7 +217,6 @@ StackPage {
         if (gameStatus === GamePage.GameStatus.Running && !isProcessing) {
             var key = event.key
             if (key >= Qt.Key_A && key <= Qt.Key_Z) {
-                console.log("-> " + key + " + " + event)
                 var letter = event.text.toUpperCase()
                 addLetter(letter)
             } else if (key === Qt.Key_Backspace) {

@@ -53,10 +53,8 @@ StackPage {
 
             CustomButton {
                 buttonText: "Quit"
-                onClicked: {
-                    console.log("Quiting the game...")
-                    Qt.quit()
-                }
+                onClicked: Qt.quit()
+                
             }
 
             CustomButton {

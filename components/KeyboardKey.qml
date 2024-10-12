@@ -3,14 +3,25 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 Rectangle {
+    enum LetterStatus {
+        Wrong,
+        Misplaced,
+        Correct
+    }
+
     id: keyRoot
     height: 60
     width: 45
-    color: "#818384"
+    color: fillColorNotUsed
     radius: 5
 
     property string keyLetter: ""
     property int textSize: 24
+
+    property color fillColorNotUsed: "#818384"
+    property color fillColorWrong: "#3a3a3c"
+    property color fillColorMisplaced: "#b59f3b"
+    property color fillColorCorrect: "#538d4e"
 
     signal keyPressed(string keyText)
 
@@ -68,4 +79,28 @@ Rectangle {
             }
         }
     ]
+
+    Connections {
+        target: GameManager
+        onLetterUsed: {
+            var newColor
+            if (letter == keyLetter) {
+                switch (status) {
+                case LetterCell.ResultType.Wrong:
+                    newColor = keyRoot.fillColorWrong
+                    break
+                case LetterCell.ResultType.Misplaced:
+                    newColor = keyRoot.fillColorMisplaced
+                    break
+                case LetterCell.ResultType.Correct:
+                    newColor = keyRoot.fillColorCorrect
+                    break
+                default:
+                    newColor = fillColorNotUsed
+                }
+
+                keyRoot.color = newColor
+            }
+        }
+    }
 }

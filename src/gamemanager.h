@@ -21,9 +21,9 @@ public:
 
 signals:
     void gameInitialized();
-
     void invalidGuess();
     void guessResult(QVector<int> guessResult, int currentStatus);
+    void letterUsed(QChar letter, int status);
 
 private:
     // Enums
@@ -35,7 +35,7 @@ private:
 
     // Game Logic
     bool customWord = false;
-    QString targetWord = "APPLE";
+    QString targetWord = "customword";
     const int guessLimit = 6;
     GameStatus gameStatus;
 
