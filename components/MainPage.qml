@@ -2,8 +2,7 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 
-Rectangle {
-    anchors.fill: parent
+StackPage {
     color: "#e3e3e1"
 
     Column {
@@ -61,14 +60,28 @@ Rectangle {
             }
 
             CustomButton {
+                id: plybtn
                 fillColor: "black"
                 buttonText: "Play"
                 textColor: "white"
                 onClicked: {
-                    console.log("Starting the game...")
-                    stackView.push("GamePage.qml")
+                    plybtn.isBusy = true
+                    GameManager.initializeGame()
                 }
             }
+        }
+    }
+
+    Connections {
+        target: GameManager
+        onWordsLoaded: {
+            if (size > 0) {
+                console.log(size + " words were loaded successfully")
+            }
+            plybtn.isBusy = false
+        }
+        onGameInitialized: {
+            stackView.push("GamePage.qml")
         }
     }
 }

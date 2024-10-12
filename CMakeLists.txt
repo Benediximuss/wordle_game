@@ -28,14 +28,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
+set(SOURCES
+    main.cpp
+    src/gamemanager.cpp
+)
+
+set(HEADERS
+    src/gamemanager.h
+)
+
+
 if(ANDROID)
     add_library(wordle_game SHARED
-      main.cpp
+      ${SOURCES}
+      ${HEADERS}
       qml.qrc
     )
 else()
     add_executable(wordle_game
-      main.cpp
+      ${SOURCES}
+      ${HEADERS}
       qml.qrc
     )
 endif()

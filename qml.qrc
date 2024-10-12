@@ -10,7 +10,9 @@
         <file>components/Keyboard.qml</file>
         <file>components/LetterCell.qml</file>
         <file>components/KeyboardRow.qml</file>
-        <file>components/CustomIcon.qml</file>
         <file>components/KeyboardKey.qml</file>
+        <file>res/words_51.txt</file>
+        <file>res/words_14855.txt</file>
+        <file>components/StackPage.qml</file>
     </qresource>
 </RCC>

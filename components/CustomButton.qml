@@ -9,24 +9,36 @@ Rectangle {
     border.width: 2
     radius: height / 2
     color: fillColor
+    scale: initScale
 
     property color fillColor: "transparent"
     property color textColor: "black"
     property string buttonText: ""
+    property var textFont: robotoSlabRegular.name
+    property var initScale: 1.0
+    property bool isBusy: false
 
     signal clicked
 
     Text {
         text: buttonRoot.buttonText
-        font.family: robotoSlabRegular.name
+        font.family: textFont
         font.pixelSize: 20
         color: buttonRoot.textColor
         anchors.centerIn: parent
+        visible: !isBusy
+    }
+
+    BusyIndicator {
+        running: isBusy
+        anchors.centerIn: parent
+        scale: 0.7
     }
 
     MouseArea {
         id: mouseArea
         hoverEnabled: true
+        enabled: !isBusy
         anchors.fill: parent
 
         onClicked: {
@@ -50,8 +62,8 @@ Rectangle {
             NumberAnimation {
                 target: buttonRoot
                 properties: "scale"
-                from: 1
-                to: 1.05
+                from: 1 * initScale
+                to: 1.05 * initScale
                 duration: 200
             }
             NumberAnimation {
@@ -68,7 +80,7 @@ Rectangle {
             NumberAnimation {
                 target: buttonRoot
                 properties: "scale"
-                to: 1
+                to: 1 * initScale
                 duration: 200
             }
             NumberAnimation {
@@ -85,13 +97,13 @@ Rectangle {
                 NumberAnimation {
                     target: buttonRoot
                     properties: "scale"
-                    to: 0.9
+                    to: 0.95 * initScale
                     duration: 75
                 }
                 NumberAnimation {
                     target: buttonRoot
                     properties: "scale"
-                    to: 1
+                    to: 1 * initScale
                     duration: 75
                 }
                 ScriptAction {

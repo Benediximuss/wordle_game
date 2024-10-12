@@ -2,14 +2,21 @@
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-Rectangle {
-    anchors.fill: parent
+StackPage {
+    enum GameStatus {
+        Running,
+        Won,
+        Lost
+    }
+
     color: "#121213"
 
     property int currentRow: 0
     property int currentCol: 0
     property int totalRows: 6
     property int totalCols: 5
+
+    property int gameStatus: GamePage.GameStatus.Running
 
     ListModel {
         id: gridModel
@@ -54,7 +61,7 @@ Rectangle {
         }
     }
 
-    property int sealTimerIndex: 0
+    //    property int sealTimerIndex: 0
     property bool isProcessing: false
 
     function submitWord() {
@@ -66,49 +73,147 @@ Rectangle {
                     var index = currentRow * totalCols + i
                     word += gridModel.get(index).cellLetter
                 }
-                console.log("Word " + word + " has been submitted.")
 
-                sealWord()
+                GameManager.enterGuess(word)
             } else {
                 console.log("Not enough letters to submit.")
             }
         }
     }
 
-    function sealWord() {
-        sealTimerIndex = 0
-        sealTimer.start()
+    function returnToMenu() {
+        StackView.view.pop()
     }
 
-    Timer {
-        id: sealTimer
-        interval: 150
-        repeat: true
-        onTriggered: {
-            if (sealTimerIndex < totalCols) {
-                var gridIndex = currentRow * totalCols + sealTimerIndex
+    //    function sealWord() {
+    //        sealTimerIndex = 0
+    //        sealTimer.start()
+    //    }
+    Connections {
+        target: GameManager
+        onInvalidGuess: {
+            console.log("Invalid word!")
+            isProcessing = false
+        }
+        onGuessResult: {
+            for (var i = 0; i < guessResult.length; i++) {
+                var gridIndex = currentRow * totalCols + i
                 gridModel.set(gridIndex, {
-                                  "cellResult": LetterCell.ResultType.Correct,
+                                  "cellResult": guessResult[i],
                                   "state": "sealed"
                               })
-                sealTimerIndex++
-            } else {
-                sealTimer.stop()
-                currentRow++
-                currentCol = 0
-                isProcessing = false
             }
+
+            currentRow++
+            currentCol = 0
+            isProcessing = false
+
+            gameStatus = currentStatus
         }
     }
 
+    //    Timer {
+    //        id: sealTimer
+    //        interval: 150
+    //        repeat: true
+    //        onTriggered: {
+    //            if (sealTimerIndex < totalCols) {
+    //                var gridIndex = currentRow * totalCols + sealTimerIndex
+    //                gridModel.set(gridIndex, {
+    //                                  "cellResult": LetterCell.ResultType.Correct,
+    //                                  "state": "sealed"
+    //                              })
+    //                sealTimerIndex++
+    //            } else {
+    //                sealTimer.stop()
+    //                currentRow++
+    //                currentCol = 0
+    //                isProcessing = false
+    //            }
+    //        }
+    //    }
     Column {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 100
-        anchors.rightMargin: 100
+        anchors.leftMargin: 60
+        anchors.rightMargin: 60
 
-        spacing: 50
+        spacing: 30
+
+        Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            spacing: 10
+
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 20
+                Text {
+                    id: titleText
+                    text: "WORDLE"
+                    font.pixelSize: 32
+                    color: "white"
+                    font.family: robotoSlabExtraBold.name
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CustomButton {
+                    buttonText: "Return to menu"
+                    textColor: "White"
+                    fillColor: "#818384"
+                    textFont: robotoSlabExtraBold.name
+                    initScale: 0.8
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: gameStatus !== GamePage.GameStatus.Running
+                    onClicked: returnToMenu()
+                }
+
+                state: "running"
+                states: [
+                    State {
+                        name: "won"
+                        when: gameStatus === GamePage.GameStatus.Won
+                        PropertyChanges {
+                            target: titleText
+                            text: "You Won!"
+                        }
+                    },
+                    State {
+                        name: "lost"
+                        when: gameStatus === GamePage.GameStatus.Lost
+                        PropertyChanges {
+                            target: titleText
+                            text: "You Lost!"
+                        }
+                    }
+                ]
+            }
+            Rectangle {
+                height: 1
+                color: "#818384"
+                anchors.left: parent.left
+                anchors.right: parent.right
+            }
+            Row {
+                visible: gameStatus === GamePage.GameStatus.Lost
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+                Text {
+                    text: "The word was:"
+                    font.pixelSize: 18
+                    color: "white"
+                    font.family: robotoSlabRegular.name
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: GameManager.getTargetWord()
+                    font.pixelSize: 24
+                    color: "white"
+                    font.family: robotoSlabExtraBold.name
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+        }
 
         GridLayout {
             id: wordGrid
@@ -121,7 +226,7 @@ Rectangle {
             Repeater {
                 model: gridModel
 
-                /*delegate:*/ LetterCell {
+                LetterCell {
                     state: model.state
                     cellText: model.cellLetter
                     cellResult: model.cellResult
@@ -131,26 +236,31 @@ Rectangle {
 
         Keyboard {
             onKeyPressed: {
-                if (keyText === "ENTER") {
-                    submitWord()
-                } else if (keyText === "\u232B") {
-                    deleteLetter()
-                } else {
-                    addLetter(keyText)
+                if (gameStatus === GamePage.GameStatus.Running
+                        && !isProcessing) {
+                    if (keyText === "ENTER") {
+                        submitWord()
+                    } else if (keyText === "\u232B") {
+                        deleteLetter()
+                    } else {
+                        addLetter(keyText)
+                    }
                 }
             }
         }
     }
 
     Keys.onPressed: {
-        var key = event.key
-        if (key >= Qt.Key_A && key <= Qt.Key_Z) {
-            var letter = event.text.toUpperCase()
-            addLetter(letter)
-        } else if (key === Qt.Key_Backspace) {
-            deleteLetter()
-        } else if (key === Qt.Key_Enter || key === Qt.Key_Return) {
-            submitWord()
+        if (gameStatus === GamePage.GameStatus.Running && !isProcessing) {
+            var key = event.key
+            if (key >= Qt.Key_A && key <= Qt.Key_Z) {
+                var letter = event.text.toUpperCase()
+                addLetter(letter)
+            } else if (key === Qt.Key_Backspace) {
+                deleteLetter()
+            } else if (key === Qt.Key_Enter || key === Qt.Key_Return) {
+                submitWord()
+            }
         }
     }
 }

@@ -29,8 +29,8 @@ Window {
 
     StackView {
         id: stackView
-//        initialItem: MainPage {}
-        initialItem: GamePage {}
+        initialItem: MainPage {}
+//         initialItem: GamePage {}
         anchors.fill: parent
         onCurrentItemChanged: {
             stackView.currentItem.forceActiveFocus()
