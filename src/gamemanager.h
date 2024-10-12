@@ -33,8 +33,8 @@ private:
     QString filePath = ":/res/words_14855.txt";
 
     // Game Logic
-    const int guessLimit = 6;
-    QString targetWord = "apple";
+    const int guessLimit;
+    QString targetWord;
     bool randomWord;
     GameStatus gameStatus;
 

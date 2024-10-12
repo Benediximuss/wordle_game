@@ -24,10 +24,12 @@ enum class GameManager::GameStatus
     LOST
 };
 
-GameManager::GameManager(QObject *parent) : QObject(parent)
+GameManager::GameManager(QObject *parent)
+    : QObject(parent),
+      guessLimit(6),
+      randomWord(randomWord = targetWord.isEmpty())
 {
     loadWords();
-    randomWord = targetWord.isEmpty();
 }
 
 GameManager::~GameManager()
