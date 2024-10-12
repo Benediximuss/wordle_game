@@ -12,10 +12,8 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    // qmlRegisterType<GameManager>("Game", 1, 0, "GameManager");
-
-    GameManager gameManager;
-    engine.rootContext()->setContextProperty("GameManager", &gameManager);
+    GameManager* gameManager = new GameManager();
+    engine.rootContext()->setContextProperty("GameManager", gameManager);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
@@ -27,15 +25,13 @@ int main(int argc, char *argv[])
 
     engine.load(url);
 
-//    qmlRegisterSingletonInstance("Zortingen", 1, 0, "Mana", GameManager::instance());
-
-//    qmlRegisterType<GameManager>("Zortingen", 1, 0, "Mana");
-
-//    QQmlContext* ctx = engine.rootContext();
-//    ctx->setContextProperty("GameManager", GameManager::instance());
-
     if (engine.rootObjects().isEmpty())
         return -1;
+
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [&]() {
+            delete gameManager;
+            gameManager = nullptr;
+        });
 
     return app.exec();
 }

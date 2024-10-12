@@ -26,7 +26,7 @@ enum class GameManager::GameStatus
 
 GameManager::GameManager(QObject *parent) : QObject(parent)
 {
-    qDebug() << "Game Manager created...";
+    loadWords();
 }
 
 GameManager::~GameManager()
@@ -34,24 +34,9 @@ GameManager::~GameManager()
     qDebug() << "Game manager destroyed";
 }
 
-void GameManager::tester()
-{
-    qDebug() << "Run tester...";
-}
-
 void GameManager::initializeGame()
 {
-    bool loaded = loadWords();
-
-    QTimer::singleShot(
-        500, this, [=]()
-        { emit wordsLoaded(words.size()); });
-
-    if (!loaded)
-        return;
-
     initLetters();
-
     guesses.clear();
 
     if (!customWord)
@@ -64,12 +49,11 @@ void GameManager::initializeGame()
     emit gameInitialized();
 }
 
-bool GameManager::loadWords()
+void GameManager::loadWords()
 {
     if (!words.empty())
     {
-        qDebug() << "Already loaded with" << words.size() << "words";
-        return true;
+        return;
     }
 
     QFile file(filePath);
@@ -77,7 +61,7 @@ bool GameManager::loadWords()
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         std::cerr << "Error opening file: " << filePath.toStdString() << std::endl;
-        return false;
+        return;
     }
 
     QTextStream in(&file);
@@ -88,8 +72,6 @@ bool GameManager::loadWords()
     }
 
     file.close();
-
-    return true;
 }
 
 void GameManager::initLetters()
@@ -102,12 +84,6 @@ void GameManager::initLetters()
 
 void GameManager::pickTargetWord()
 {
-    // std::srand(std::time(0));
-    // size_t randomIndex = std::rand() % words.size();
-    // auto it = words.begin();
-    // std::advance(it, randomIndex);
-    // targetWord = *it;
-
     int randomIndex = QRandomGenerator::global()->bounded(words.size());
     auto it = words.begin();
     std::advance(it, randomIndex);
@@ -124,10 +100,10 @@ void GameManager::enterGuess(QString guess)
     {
         qDebug() << "Already guessed" << guess;
     }
-    // else if (words.find(guess) == words.end())
-    // {
-    //     qDebug() << "No such word" << guess;
-    // }
+    else if (words.find(guess) == words.end())
+    {
+        qDebug() << "No such word" << guess;
+    }
     else
     {
         isValid = true;

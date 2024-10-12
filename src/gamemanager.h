@@ -15,14 +15,11 @@ public:
     explicit GameManager(QObject *parent = nullptr);
     ~GameManager();
 
-    Q_INVOKABLE void tester();
-
     Q_INVOKABLE void initializeGame();
     Q_INVOKABLE void enterGuess(QString);
     Q_INVOKABLE QString getTargetWord();
 
 signals:
-    void wordsLoaded(int size);
     void gameInitialized();
 
     void invalidGuess();
@@ -35,11 +32,11 @@ private:
 
     // Predefined
     QString filePath = ":/res/words_14855.txt";
-    QString targetWord = "APPLE";
-    bool customWord = false;
-    const int guessLimit = 6;
 
-    // Logic
+    // Game Logic
+    bool customWord = false;
+    QString targetWord = "APPLE";
+    const int guessLimit = 6;
     GameStatus gameStatus;
 
     // Data
@@ -48,7 +45,7 @@ private:
     QSet<QString> guesses;
 
     // Initializers
-    bool loadWords();
+    void loadWords();
     void initLetters();
     void pickTargetWord();
 

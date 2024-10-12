@@ -74,14 +74,9 @@ StackPage {
 
     Connections {
         target: GameManager
-        onWordsLoaded: {
-            if (size > 0) {
-                console.log(size + " words were loaded successfully")
-            }
-            plybtn.isBusy = false
-        }
         onGameInitialized: {
             stackView.push("GamePage.qml")
+            plybtn.isBusy = false
         }
     }
 }

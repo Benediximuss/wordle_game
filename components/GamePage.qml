@@ -85,14 +85,9 @@ StackPage {
         StackView.view.pop()
     }
 
-    //    function sealWord() {
-    //        sealTimerIndex = 0
-    //        sealTimer.start()
-    //    }
     Connections {
         target: GameManager
         onInvalidGuess: {
-            console.log("Invalid word!")
             isProcessing = false
         }
         onGuessResult: {
@@ -112,26 +107,6 @@ StackPage {
         }
     }
 
-    //    Timer {
-    //        id: sealTimer
-    //        interval: 150
-    //        repeat: true
-    //        onTriggered: {
-    //            if (sealTimerIndex < totalCols) {
-    //                var gridIndex = currentRow * totalCols + sealTimerIndex
-    //                gridModel.set(gridIndex, {
-    //                                  "cellResult": LetterCell.ResultType.Correct,
-    //                                  "state": "sealed"
-    //                              })
-    //                sealTimerIndex++
-    //            } else {
-    //                sealTimer.stop()
-    //                currentRow++
-    //                currentCol = 0
-    //                isProcessing = false
-    //            }
-    //        }
-    //    }
     Column {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -254,6 +229,7 @@ StackPage {
         if (gameStatus === GamePage.GameStatus.Running && !isProcessing) {
             var key = event.key
             if (key >= Qt.Key_A && key <= Qt.Key_Z) {
+                console.log("-> " + key + " + " + event)
                 var letter = event.text.toUpperCase()
                 addLetter(letter)
             } else if (key === Qt.Key_Backspace) {
