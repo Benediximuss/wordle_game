@@ -15,7 +15,7 @@ StackPage {
     property int currentCol: 0
     property int totalRows: 6
     property int totalCols: 5
-
+    property bool isProcessing: false
     property int gameStatus: GamePage.GameStatus.Running
 
     ListModel {
@@ -33,12 +33,12 @@ StackPage {
 
     function addLetter(letter) {
         if (currentRow < totalRows && currentCol < totalCols) {
-                var index = currentRow * totalCols + currentCol
-                gridModel.set(index, {
-                                  "state": "nonEmpty",
-                                  "cellLetter": letter
-                              })
-                currentCol++
+            var index = currentRow * totalCols + currentCol
+            gridModel.set(index, {
+                              "state": "nonEmpty",
+                              "cellLetter": letter
+                          })
+            currentCol++
         }
     }
 
@@ -52,9 +52,6 @@ StackPage {
                           })
         }
     }
-
-    //    property int sealTimerIndex: 0
-    property bool isProcessing: false
 
     function submitWord() {
         if (!isProcessing && currentCol === totalCols) {
@@ -77,6 +74,7 @@ StackPage {
         target: GameManager
         onInvalidGuess: {
             isProcessing = false
+            showPopup(message)
         }
         onGuessResult: {
             for (var i = 0; i < guessResult.length; i++) {
@@ -92,7 +90,89 @@ StackPage {
             isProcessing = false
 
             gameStatus = currentStatus
+
+            if (gameStatus === GamePage.GameStatus.Won)
+                showPopup("Splendid")
+            else if (gameStatus === GamePage.GameStatus.Lost)
+                showPopup("😥")
         }
+    }
+
+    function showPopup(message) {
+        popupText.text = message
+        popUp.state = "visible"
+        popupTimer.start()
+    }
+
+    Timer {
+        id: popupTimer
+        interval: 2000
+        repeat: false
+        onTriggered: popUp.state = "hidden"
+    }
+
+    Rectangle {
+        id: popUp
+        width: 150
+        height: 40
+        radius: 5
+        color: "white"
+        anchors.top: parent.top
+        anchors.topMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        z: 1
+
+        state: "hidden"
+
+        Text {
+            id: popupText
+            font.pixelSize: 16
+            font.family: robotoSlabRegular.name
+            color: "black"
+            anchors.centerIn: parent
+        }
+
+        states: [
+            State {
+                name: "visible"
+                PropertyChanges {
+                    target: popUp
+                    opacity: 0.95
+                }
+            },
+            State {
+                name: "hidden"
+                PropertyChanges {
+                    target: popUp
+                    opacity: 0.0
+                }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "hidden"
+                to: "visible"
+                reversible: true
+                NumberAnimation {
+                    target: popUp
+                    property: "opacity"
+                    duration: 500
+                    easing.type: Easing.OutQuad
+                }
+            },
+            Transition {
+                from: "visible"
+                to: "hidden"
+                reversible: true
+                NumberAnimation {
+                    target: popUp
+                    property: "opacity"
+                    duration: 500
+                    easing.type: Easing.OutQuad
+                }
+            }
+        ]
     }
 
     Column {

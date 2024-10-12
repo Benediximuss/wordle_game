@@ -21,7 +21,7 @@ public:
 
 signals:
     void gameInitialized();
-    void invalidGuess();
+    void invalidGuess(QString message);
     void guessResult(QVector<int> guessResult, int currentStatus);
     void letterUsed(QChar letter, int status);
 
@@ -30,13 +30,12 @@ private:
     enum class LetterStatus;
     enum class GameStatus;
 
-    // Predefined
     QString filePath = ":/res/words_14855.txt";
 
     // Game Logic
-    bool customWord = false;
-    QString targetWord = "customword";
     const int guessLimit = 6;
+    QString targetWord = "apple";
+    bool randomWord;
     GameStatus gameStatus;
 
     // Data

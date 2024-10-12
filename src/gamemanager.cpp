@@ -27,6 +27,7 @@ enum class GameManager::GameStatus
 GameManager::GameManager(QObject *parent) : QObject(parent)
 {
     loadWords();
+    randomWord = targetWord.isEmpty();
 }
 
 GameManager::~GameManager()
@@ -39,8 +40,10 @@ void GameManager::initializeGame()
     initLetters();
     guesses.clear();
 
-    if (!customWord)
+    if (randomWord)
         pickTargetWord();
+    else
+        targetWord = targetWord.toUpper();
 
     gameStatus = GameStatus::RUNNING;
 
@@ -92,27 +95,20 @@ void GameManager::pickTargetWord()
 
 void GameManager::enterGuess(QString guess)
 {
-    bool isValid = false;
-
     guess = guess.toUpper();
 
     if (guesses.find(guess) != guesses.end())
     {
-        qDebug() << "Already guessed" << guess;
+        emit invalidGuess("Already guessed");
+        return;
     }
     else if (words.find(guess) == words.end())
     {
-        qDebug() << "No such word" << guess;
-    }
-    else
-    {
-        isValid = true;
+        emit invalidGuess("No such word");
+        return;
     }
 
-    if (!isValid)
-        emit invalidGuess();
-    else
-        processGuess(guess);
+    processGuess(guess);
 }
 
 QString GameManager::getTargetWord()
