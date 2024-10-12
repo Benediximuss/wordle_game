@@ -27,16 +27,10 @@ A clone of the popular Wordle game built using **Qt 5.14**. The game features a 
 
 <table style="width:100%;">
   <tr>
-    <td><img src="doc/Mainmenu.png"/></td>
-    <td><img src="doc/Gameplay.png"/></td>
+    <td style="none"><img src="doc/Mainmenu.png"/></td>
+    <td style="none"><img src="doc/Gameplay.png"/></td>
   </tr>
 </table>
-
-<style>
-td, th {
-   border: none!important;
-}
-</style>
 
 ### Installation
 
